@@ -19,7 +19,7 @@ router.post("/register", async (req, res) => {
                 })
             }
         }
-        if(!req.body.firstName || !req.body.lastName || !req.body.email || !req.body.password || !req.body.phone){
+        if(!req.body.fullName || !req.body.email || !req.body.password){
             return res.status(400).send({
                 statue: 0,
                 message: "all fields are required"
@@ -42,40 +42,34 @@ router.post("/register", async (req, res) => {
                 message: "email already exist"
             })
         }
-        else {
-            const hashedPassword = await bcrypt.hashSync(req.body.password, 10)
-            let verificationOTP = Math.floor(100000 + Math.random() * 900000)
-            const expiryOTP = Date.now() + 2 * 60 * 1000;
-            const user = {
-                firstName: req.body.firstName,
-                lastName: req.body.lastName,
-                email: email,
-                password: hashedPassword,
-                phone: req.body.phone,
-                otp: verificationOTP,
-                expiry: expiryOTP,
-                isVerified: false,
-                isAdmin: false,
-                isBlocked: false
-            }
 
-            const insertUser = await User.create(user)
-            if (insertUser) {
-                const findUser = await User.findOne({ _id: insertUser._id })
-                sendOtp(`${email}`, `${verificationOTP}`);
-                return res.status(200).send({
-                    status: 1,
-                    message: "registered successfully",
-                    data: findUser
-                })
-            }
-            else {
-                return res.status(400).send({
-                    status: 0,
-                    message: "something went wrong"
-                })
-            }
+        const hashedPassword = await bcrypt.hashSync(req.body.password, 10)
+        let verificationOTP = Math.floor(100000 + Math.random() * 900000)
+        const expiryOTP = Date.now() + 2 * 60 * 1000;
+        const user = {
+            fullName: req.body.fullName,
+            email: email,
+            password: hashedPassword,
+            otp: verificationOTP,
+            expiry: expiryOTP,
+            isVerified: false
         }
+
+        const insertUser = await User.create(user)
+        if (!insertUser) {
+            return res.status(400).send({
+                status: 0,
+                message: "something went wrong"
+            })
+        }
+
+        const findUser = await User.findOne({ _id: insertUser._id })
+        sendOtp(`${email}`, `${verificationOTP}`);
+        return res.status(200).send({
+            status: 1,
+            message: "registered successfully",
+            data: findUser
+        })
     }
     catch (error) {
         return res.status(500).send({

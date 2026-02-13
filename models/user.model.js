@@ -1,13 +1,7 @@
 import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema({
-    firstName: {
-        type: String,
-        required: false,
-        trim: true,
-        default: null
-    },
-    lastName: {
+    fullName: {
         type: String,
         required: false,
         trim: true,
@@ -27,12 +21,6 @@ const userSchema = new mongoose.Schema({
         trim: true,
         select: false
     },
-    phone: {
-        type: Number,
-        required: false,
-        trim: true,
-        default: null
-    },
     otp: {
         type: Number,
         required: false,
@@ -44,14 +32,6 @@ const userSchema = new mongoose.Schema({
         default: null
     },
     isVerified: {
-        type: Boolean,
-        default: false
-    },
-    isAdmin: {
-        type: Boolean,
-        default: false
-    },
-    isBlocked: {
         type: Boolean,
         default: false
     }

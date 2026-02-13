@@ -2,17 +2,29 @@ import express from "express";
 import { upload } from "../../config/multer.js";
 import cloudinary from "../../config/cloudinary.js";
 import { BillSummary } from "../../models/billSummary.model.js";
+import { ObjectId } from "mongodb";
 import fs from "fs";
+import { User } from "../../models/user.model.js";
 
 const router = express.Router();
 
 router.post(
-  "/billsummary",
+  "/billsummary/:userId",
   upload.fields([{ name: "billImage", maxCount: 1 }]),
   async (req, res) => {
     try {
-      const { summary, billMonth } = req.body;
 
+      const userId = new ObjectId(req.params.userId)
+      let checkUser = await User.findOne({ _id: userId })
+
+      if(!checkUser){
+        return res.status(400).send({
+          status: 0,
+          message: "something went wrong"
+      })
+      }
+
+      const { summary, billMonth } = req.body;
       if (!summary || !billMonth) {
         return res.status(400).json({
           status: 0,
@@ -66,6 +78,7 @@ router.post(
         taxes,
         totalAmount,
         billMonth: parseInt(billMonth),
+        createdBy: userId
       });
 
       return res.status(200).json({

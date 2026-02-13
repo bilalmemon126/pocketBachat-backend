@@ -16,7 +16,7 @@ const transporter = nodemailer.createTransport({
 export const sendOtp = async (userEmail, verificationOtp) => {
     try{
         const info = await transporter.sendMail({
-            from: `Bazarify <${process.env.EMAIL_USER}>`,
+            from: `pocketBachat <${process.env.EMAIL_USER}>`,
             to: userEmail,
             subject: "Verify Your Email",
             text: verificationOtp,

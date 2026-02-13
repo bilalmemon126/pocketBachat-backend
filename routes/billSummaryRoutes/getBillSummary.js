@@ -24,7 +24,7 @@ router.get('/billsummary/:userId', async (req, res) => {
         }
 
         let findSummary = await BillSummary.find(filter)
-            .sort({ createdAt: -1 })
+            .sort({ billMonth: 1 })
 
         if (findSummary.length === 0) {
             return res.send({
